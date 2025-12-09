@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Proof Chat Editor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="light">
+  <div id="app">
+    <header id="topbar">
+      <div class="topbar-left">
+        <h1>Proof Chat Editor</h1>
+        <span id="fileIndicator" class="file-indicator">Untitled</span>
+      </div>
+      <div id="controls">
+        <label class="toggle-label">
+          <input id="validateToggle" type="checkbox" checked aria-label="Validate with Lean">
+          <span>Validate with Lean</span>
+        </label>
+        <button id="themeToggle" class="icon-button" title="Toggle Dark Mode" aria-label="Toggle theme">
+          <svg class="theme-icon sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="theme-icon moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <div id="statusIndicator" class="status-idle" aria-live="polite" title="Status"></div>
+      </div>
+    </header>
+
+    <main id="container">
+      <section id="leftPane" aria-label="Input and History">
+        <div id="inputArea">
+          <div class="input-toolbar">
+            <button id="mathPaletteToggle" class="toolbar-button" title="Math Symbols (Ctrl+M)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              Math Symbols
+            </button>
+            <button id="insertProofTemplate" class="toolbar-button" title="Insert Proof Template">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              Template
+            </button>
+          </div>
+
+          <!-- Math Symbol Palette -->
+          <div id="mathPalette" class="math-palette hidden">
+            <div class="palette-header">
+              <span>Math Symbols</span>
+              <button class="palette-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="palette-sections">
+              <div class="palette-section">
+                <div class="section-title">Greek Letters</div>
+                <div class="symbol-grid">
+                  <button class="symbol-btn" data-symbol="α" data-shortcut="Alt+a">α</button>
+                  <button class="symbol-btn" data-symbol="β" data-shortcut="Alt+b">β</button>
+                  <button class="symbol-btn" data-symbol="γ" data-shortcut="Alt+g">γ</button>
+                  <button class="symbol-btn" data-symbol="δ" data-shortcut="Alt+d">δ</button>
+                  <button class="symbol-btn" data-symbol="ε" data-shortcut="Alt+e">ε</button>
+                  <button class="symbol-btn" data-symbol="θ" data-shortcut="Alt+t">θ</button>
+                  <button class="symbol-btn" data-symbol="λ" data-shortcut="Alt+l">λ</button>
+                  <button class="symbol-btn" data-symbol="μ" data-shortcut="Alt+m">μ</button>
+                  <button class="symbol-btn" data-symbol="π" data-shortcut="Alt+p">π</button>
+                  <button class="symbol-btn" data-symbol="σ" data-shortcut="Alt+s">σ</button>
+                  <button class="symbol-btn" data-symbol="φ" data-shortcut="Alt+f">φ</button>
+                  <button class="symbol-btn" data-symbol="ω" data-shortcut="Alt+w">ω</button>
+                </div>
+              </div>
+
+              <div class="palette-section">
+                <div class="section-title">Relations</div>
+                <div class="symbol-grid">
+                  <button class="symbol-btn" data-symbol="=" data-shortcut="=">=</button>
+                  <button class="symbol-btn" data-symbol="≠" data-shortcut="Alt+/">≠</button>
+                  <button class="symbol-btn" data-symbol="<" data-shortcut="<"><</button>
+                  <button class="symbol-btn" data-symbol=">" data-shortcut=">">></button>
+                  <button class="symbol-btn" data-symbol="≤" data-shortcut="Alt+,">≤</button>
+                  <button class="symbol-btn" data-symbol="≥" data-shortcut="Alt+.">≥</button>
+                  <button class="symbol-btn" data-symbol="≈" data-shortcut="Alt+~">≈</button>
+                  <button class="symbol-btn" data-symbol="≡" data-shortcut="Alt+=">≡</button>
+                  <button class="symbol-btn" data-symbol="∈" data-shortcut="Alt+i">∈</button>
+                  <button class="symbol-btn" data-symbol="∉" data-shortcut="Alt+Shift+i">∉</button>
+                  <button class="symbol-btn" data-symbol="⊂" data-shortcut="Alt+[">⊂</button>
+                  <button class="symbol-btn" data-symbol="⊃" data-shortcut="Alt+]">⊃</button>
+                </div>
+              </div>
+
+              <div class="palette-section">
+                <div class="section-title">Operators</div>
+                <div class="symbol-grid">
+                  <button class="symbol-btn" data-symbol="+" data-shortcut="+">+</button>
+                  <button class="symbol-btn" data-symbol="−" data-shortcut="-">−</button>
+                  <button class="symbol-btn" data-symbol="×" data-shortcut="Alt+x">×</button>
+                  <button class="symbol-btn" data-symbol="÷" data-shortcut="Alt+÷">÷</button>
+                  <button class="symbol-btn" data-symbol="±" data-shortcut="Alt+±">±</button>
+                  <button class="symbol-btn" data-symbol="∓">∓</button>
+                  <button class="symbol-btn" data-symbol="·" data-shortcut="Alt+*">·</button>
+                  <button class="symbol-btn" data-symbol="∘">∘</button>
+                  <button class="symbol-btn" data-symbol="√" data-shortcut="Alt+r">√</button>
+                  <button class="symbol-btn" data-symbol="∑" data-shortcut="Alt+Shift+s">∑</button>
+                  <button class="symbol-btn" data-symbol="∏">∏</button>
+                  <button class="symbol-btn" data-symbol="∫" data-shortcut="Alt+Shift+i">∫</button>
+                </div>
+              </div>
+
+              <div class="palette-section">
+                <div class="section-title">Logic</div>
+                <div class="symbol-grid">
+                  <button class="symbol-btn" data-symbol="∀" data-shortcut="Alt+Shift+a">∀</button>
+                  <button class="symbol-btn" data-symbol="∃" data-shortcut="Alt+Shift+e">∃</button>
+                  <button class="symbol-btn" data-symbol="∄">∄</button>
+                  <button class="symbol-btn" data-symbol="¬" data-shortcut="Alt+n">¬</button>
+                  <button class="symbol-btn" data-symbol="∧" data-shortcut="Alt+7">∧</button>
+                  <button class="symbol-btn" data-symbol="∨" data-shortcut="Alt+8">∨</button>
+                  <button class="symbol-btn" data-symbol="→" data-shortcut="Alt+Right">→</button>
+                  <button class="symbol-btn" data-symbol="←" data-shortcut="Alt+Left">←</button>
+                  <button class="symbol-btn" data-symbol="⇒" data-shortcut="Alt+Shift+Right">⇒</button>
+                  <button class="symbol-btn" data-symbol="⇐" data-shortcut="Alt+Shift+Left">⇐</button>
+                  <button class="symbol-btn" data-symbol="⟺">⟺</button>
+                  <button class="symbol-btn" data-symbol="∴">∴</button>
+                </div>
+              </div>
+
+              <div class="palette-section">
+                <div class="section-title">Sets</div>
+                <div class="symbol-grid">
+                  <button class="symbol-btn" data-symbol="∅" data-shortcut="Alt+0">∅</button>
+                  <button class="symbol-btn" data-symbol="∪" data-shortcut="Alt+u">∪</button>
+                  <button class="symbol-btn" data-symbol="∩" data-shortcut="Alt+Shift+u">∩</button>
+                  <button class="symbol-btn" data-symbol="ℕ" data-shortcut="Alt+N">ℕ</button>
+                  <button class="symbol-btn" data-symbol="ℤ" data-shortcut="Alt+Z">ℤ</button>
+                  <button class="symbol-btn" data-symbol="ℚ" data-shortcut="Alt+Q">ℚ</button>
+                  <button class="symbol-btn" data-symbol="ℝ" data-shortcut="Alt+R">ℝ</button>
+                  <button class="symbol-btn" data-symbol="ℂ" data-shortcut="Alt+C">ℂ</button>
+                </div>
+              </div>
+
+              <div class="palette-section">
+                <div class="section-title">Other</div>
+                <div class="symbol-grid">
+                  <button class="symbol-btn" data-symbol="∞" data-shortcut="Alt+Shift+8">∞</button>
+                  <button class="symbol-btn" data-symbol="∂">∂</button>
+                  <button class="symbol-btn" data-symbol="∇">∇</button>
+                  <button class="symbol-btn" data-symbol="°">°</button>
+                  <button class="symbol-btn" data-symbol="ℓ">ℓ</button>
+                  <button class="symbol-btn" data-symbol="⊥">⊥</button>
+                  <button class="symbol-btn" data-symbol="∥">∥</button>
+                  <button class="symbol-btn" data-symbol="∠">∠</button>
+                  <button class="symbol-btn" data-symbol="△">△</button>
+                  <button class="symbol-btn" data-symbol="∎">∎</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <label for="englishInput" class="sr-only">Proof Input</label>
+          <textarea 
+            id="englishInput" 
+            placeholder="Type your proof in English here... Press Ctrl+Enter to generate Lean code."
+            spellcheck="true"
+            aria-describedby="inputHelp"
+          ></textarea>
+          <div id="inputHelp" class="help-text">
+            <span><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to generate</span>
+            <span><kbd>Ctrl</kbd> + <kbd>M</kbd> for math symbols</span>
+            <span><kbd>Alt</kbd> + <kbd>key</kbd> for quick symbols</span>
+          </div>
+        </div>
+        <div id="historyContainer">
+          <div class="pane-header">
+            <h2>Proof History</h2>
+            <button id="clearHistoryBtn" class="small-button" title="Clear all history">Clear</button>
+          </div>
+          <div id="history" aria-label="Proof History"></div>
+        </div>
+      </section>
+
+      <aside id="rightPane" aria-label="Generated Lean Code">
+        <div class="output-section">
+          <div class="section-header">
+            <h2>Lean Code</h2>
+            <button id="copyLeanBtn" class="small-button" title="Copy to clipboard">Copy</button>
+          </div>
+          <pre id="leanOutput" aria-live="polite">// Lean code appears here</pre>
+        </div>
+        <div class="output-section">
+          <div class="section-header">
+            <h2>Validation</h2>
+          </div>
+          <pre id="validationOutput" aria-live="polite">// Validation output appears here</pre>
+        </div>
+      </aside>
+    </main>
+
+    <div id="notification" class="notification hidden" role="alert" aria-live="assertive"></div>
+
+    <!-- Modals -->
+    <div id="preferencesModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Preferences</h2>
+          <button class="modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="preference-group">
+            <label>
+              <input type="checkbox" id="prefAutoValidate" checked>
+              Auto-validate on generate
+            </label>
+          </div>
+          <div class="preference-group">
+            <label>
+              <input type="checkbox" id="prefLivePreview" checked>
+              Enable live preview
+            </label>
+          </div>
+          <div class="preference-group">
+            <label>
+              Theme:
+              <select id="prefTheme">
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="button-secondary modal-cancel">Cancel</button>
+          <button class="button-primary modal-save">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="aboutModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>About Proof Chat Editor</h2>
+          <button class="modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Version:</strong> 1.0.0</p>
+          <p><strong>Description:</strong> An intelligent proof assistant that converts natural language proofs to Lean 4 code.</p>
+          <p><strong>Author:</strong> Your Name</p>
+        </div>
+        <div class="modal-footer">
+          <button class="button-primary modal-close">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="shortcutsModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Keyboard Shortcuts</h2>
+          <button class="modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <table class="shortcuts-table">
+            <tr><td><kbd>Ctrl/Cmd</kbd> + <kbd>N</kbd></td><td>New proof</td></tr>
+            <tr><td><kbd>Ctrl/Cmd</kbd> + <kbd>O</kbd></td><td>Open file</td></tr>
+            <tr><td><kbd>Ctrl/Cmd</kbd> + <kbd>S</kbd></td><td>Save</td></tr>
+            <tr><td><kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd></td><td>Save as</td></tr>
+            <tr><td><kbd>Ctrl/Cmd</kbd> + <kbd>E</kbd></td><td>Export to PDF</td></tr>
+            <tr><td><kbd>Ctrl/Cmd</kbd> + <kbd>Enter</kbd></td><td>Generate Lean code</td></tr>
+            <tr><td><kbd>Ctrl/Cmd</kbd> + <kbd>M</kbd></td><td>Toggle math symbols</td></tr>
+            <tr><td><kbd>Ctrl/Cmd</kbd> + <kbd>D</kbd></td><td>Toggle dark mode</td></tr>
+            <tr><td><kbd>Esc</kbd></td><td>Clear current input</td></tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="button-primary modal-close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
